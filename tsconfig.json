@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true, // import * as React from 'react'; =>  import React from 'react';
+    "sourceMap": true, // 에러난 위치 파악
+    "lib": ["ES2020", "DOM"], // 최신문법
+    "jsx": "react", // jsx를 react에서 씀
+    "module": "esnext", // 최신 모듈 사용
+    "moduleResolution": "Node", // import / export 도 node가 해석할 수 있게 함
+    "target": "es5", // 최신문법을 es5로 변환함
+    "strict": true, // 타입 체킹 엄격하게 함
+    "resolveJsonModule": true, // import json파일 허락함
+    // 경로 지정 : 절대경로
+    "baseUrl": ".",
+    "paths": {
+      "@hooks/*": ["hooks/*"],
+      "@components/*": ["components/*"],
+      "@layouts/*": ["layouts/*"],
+      "@pages/*": ["pages/*"],
+      "@utils/*": ["utils/*"],
+      "@typings/*": ["typings/*"]
+    }
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs",
+      "moduleResolution": "Node",
+      "target": "es5",
+      "esModuleInterop": true
+    }
+  }
+}
