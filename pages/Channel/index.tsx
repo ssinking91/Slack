@@ -5,9 +5,10 @@ import { useParams } from 'react-router';
 import ChatBox from '@components/ChatBox';
 import ChatList from '@components/ChatList';
 import InviteChannelModal from '@components/InviteChannelModal';
+import { Header, Container, DragOver } from '@pages/Channel/styles';
+//
 import useInput from '@hooks/useInput';
 import useSocket from '@hooks/useSocket';
-import { Header, Container, DragOver } from '@pages/Channel/styles';
 //
 import { IChannel, IChat, IUser } from '@typings/db';
 //

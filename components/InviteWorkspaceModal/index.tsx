@@ -1,13 +1,15 @@
+import React, { FC, useCallback } from 'react';
+import { useParams } from 'react-router';
+//
 import Modal from '@components/Modal';
 import useInput from '@hooks/useInput';
 import { Button, Input, Label } from '@pages/SignUp/styles';
 import { IUser } from '@typings/db';
 import fetcher from '@utils/fetcher';
+//
 import axios from 'axios';
-import React, { FC, useCallback } from 'react';
-import { useParams } from 'react-router';
-import { toast } from 'react-toastify';
 import useSWR from 'swr';
+import { toast } from 'react-toastify';
 
 interface Props {
   show: boolean;
@@ -16,7 +18,9 @@ interface Props {
 }
 const InviteWorkspaceModal: FC<Props> = ({ show, onCloseModal, setShowInviteWorkspaceModal }) => {
   const { workspace } = useParams<{ workspace: string; channel: string }>();
+
   const [newMember, onChangeNewMember, setNewMember] = useInput('');
+
   const { data: userData } = useSWR<IUser>('/api/users', fetcher);
   const { mutate: revalidateMember } = useSWR<IUser[]>(
     userData ? `/api/workspaces/${workspace}/members` : null,

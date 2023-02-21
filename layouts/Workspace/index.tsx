@@ -145,6 +145,9 @@ const Workspace = () => {
     return <Redirect to="/login" />;
   }
 
+  console.log('userData : ', userData);
+  console.log('channelData : ', channelData);
+
   return (
     <div>
       <Header>
@@ -181,7 +184,7 @@ const Workspace = () => {
         </Workspaces>
         <Channels>
           <WorkspaceName onClick={toggleWorkspaceModal}>
-            {userData?.Workspaces.find((v) => v.url === workspace)?.name}
+            {userData?.Workspaces.find((v) => v.url === workspace)?.name || 'Workspace'}
           </WorkspaceName>
           <MenuScroll>
             <Menu show={showWorkspaceModal} onCloseModal={toggleWorkspaceModal} style={{ top: 95, left: 80 }}>
@@ -203,6 +206,7 @@ const Workspace = () => {
           </Switch>
         </Chats>
       </WorkspaceWrapper>
+
       <Modal show={showCreateWorkspaceModal} onCloseModal={onCloseModal}>
         <form onSubmit={onCreateWorkspace}>
           <Label id="workspace-label">
@@ -216,11 +220,13 @@ const Workspace = () => {
           <Button type="submit">생성하기</Button>
         </form>
       </Modal>
+
       <CreateChannelModal
         show={showCreateChannelModal}
         onCloseModal={onCloseModal}
         setShowCreateChannelModal={setShowCreateChannelModal}
       />
+
       <InviteWorkspaceModal
         show={showInviteWorkspaceModal}
         onCloseModal={onCloseModal}

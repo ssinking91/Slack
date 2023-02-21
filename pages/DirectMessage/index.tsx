@@ -1,20 +1,25 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router';
+//
 import ChatBox from '@components/ChatBox';
 import ChatList from '@components/ChatList';
-import useInput from '@hooks/useInput';
-import useSocket from '@hooks/useSocket';
 import { DragOver } from '@pages/Channel/styles';
 import { Header, Container } from '@pages/DirectMessage/styles';
+//
+import useSocket from '@hooks/useSocket';
+import useInput from '@hooks/useInput';
+//
 import { IDM } from '@typings/db';
+//
 import fetcher from '@utils/fetcher';
 import makeSection from '@utils/makeSection';
+//
 import axios from 'axios';
-import gravatar from 'gravatar';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Scrollbars } from 'react-custom-scrollbars-2';
-import { useParams } from 'react-router';
-import { toast } from 'react-toastify';
 import useSWR from 'swr';
 import useSWRInfinite from 'swr/infinite';
+import gravatar from 'gravatar';
+import { Scrollbars } from 'react-custom-scrollbars-2';
+import { toast } from 'react-toastify';
 
 const PAGE_SIZE = 20;
 const DirectMessage = () => {
