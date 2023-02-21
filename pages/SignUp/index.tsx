@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 //
 import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from '@pages/SignUp/styles';
 //
@@ -46,14 +46,16 @@ const SignUp = () => {
       if (!mismatchError) {
         setSignUpError(false);
         setSignUpSuccess(false);
+        // const baseUrl = `http://localhost:3095`;
         axios
           .post('/api/users', { email, nickname, password })
-          .then(() => {
+          .then((res) => {
+            console.log(res);
             setSignUpSuccess(true);
           })
           .catch((error) => {
             console.log(error.response?.data);
-            setSignUpError(error.response?.data?.code === 403);
+            setSignUpError(error.response?.status === 403);
           });
       }
     },
@@ -106,7 +108,7 @@ const SignUp = () => {
       </Form>
       <LinkContainer>
         이미 회원이신가요?&nbsp;
-        <a href="/login">로그인 하러가기</a>
+        <Link to="/login">로그인 하러가기</Link>
       </LinkContainer>
     </div>
   );

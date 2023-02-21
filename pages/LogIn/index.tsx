@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 //
 import { Button, Error, Form, Header, Input, Label, LinkContainer } from '@pages/SignUp/styles';
 //
@@ -28,7 +28,8 @@ const LogIn = () => {
             withCredentials: true,
           },
         )
-        .then(() => {
+        .then((res) => {
+          // mutate({ ...res.data }, false) // OPTIMISTIC UI(false)  <-> pessimistic UI(true)
           mutate();
         })
         .catch((error) => {
@@ -66,7 +67,7 @@ const LogIn = () => {
       </Form>
       <LinkContainer>
         아직 회원이 아니신가요?&nbsp;
-        <a href="/signup">회원가입 하러가기</a>
+        <Link to="/signup">회원가입 하러가기</Link>
       </LinkContainer>
     </div>
   );
