@@ -3,12 +3,11 @@ import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import webpack, { Configuration as WebpackConfiguration } from 'webpack';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 
 interface Configuration extends WebpackConfiguration {
   devServer?: WebpackDevServerConfiguration;
 }
-
-import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -16,6 +15,7 @@ const config: Configuration = {
   name: 'slack',
   mode: isDevelopment ? 'development' : 'production',
   devtool: !isDevelopment ? 'hidden-source-map' : 'eval',
+  // tsconfig, wdbpack.config 둘다 설정
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
     alias: {
@@ -36,10 +36,12 @@ const config: Configuration = {
     rules: [
       {
         test: /\.tsx?$/,
+        // Webpack이 모듈을 번들링할 때 Babel을 사용하여 ES6+ 코드를 ES5 코드로 트랜스파일링하도록 babel-loader를 설치
         loader: 'babel-loader',
         options: {
           presets: [
             [
+              //@babel/preset-env은 함께 사용되어야 하는 Babel 플러그인을 모아 둔 것
               '@babel/preset-env',
               {
                 targets: { browsers: ['IE 10'] },
@@ -64,6 +66,7 @@ const config: Configuration = {
     ],
   },
   plugins: [
+    // type checking 과 webpack 실행이 동시에 할 수 있어서 성능 좋아짐
     new ForkTsCheckerWebpackPlugin({
       async: false,
       // eslint: {
@@ -72,6 +75,7 @@ const config: Configuration = {
     }),
     new webpack.EnvironmentPlugin({ NODE_ENV: isDevelopment ? 'development' : 'production' }),
   ],
+  // 컴파일 + 번들링된 js 파일이 저장될 경로와 이름 지정
   output: {
     path: path.join(__dirname, 'dist'),
     filename: '[name].js',
@@ -82,12 +86,12 @@ const config: Configuration = {
     port: 3090,
     devMiddleware: { publicPath: '/dist/' },
     static: { directory: path.resolve(__dirname) },
-    // proxy: {
-    //   '/api/': {
-    //     target: 'http://localhost:3095',
-    //     changeOrigin: true,
-    //   },
-    // },
+    proxy: {
+      '/api/': {
+        target: 'http://localhost:3095',
+        changeOrigin: true,
+      },
+    },
   },
 };
 
