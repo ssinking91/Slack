@@ -22,11 +22,16 @@ import { Scrollbars } from 'react-custom-scrollbars-2';
 import { toast } from 'react-toastify';
 
 const PAGE_SIZE = 20;
+
 const DirectMessage = () => {
   const { workspace, id } = useParams<{ workspace: string; id: string }>();
+
   const [socket] = useSocket(workspace);
+
   const { data: myData } = useSWR('/api/users', fetcher);
+
   const { data: userData } = useSWR(`/api/workspaces/${workspace}/users/${id}`, fetcher);
+
   const {
     data: chatData,
     mutate: mutateChat,
@@ -44,11 +49,15 @@ const DirectMessage = () => {
       },
     },
   );
+
   const [chat, onChangeChat, setChat] = useInput('');
+
   const scrollbarRef = useRef<Scrollbars>(null);
+
   const [dragOver, setDragOver] = useState(false);
 
   const isEmpty = chatData?.[0]?.length === 0;
+
   const isReachingEnd = isEmpty || (chatData && chatData[chatData.length - 1]?.length < PAGE_SIZE);
 
   const onSubmitForm = useCallback(
@@ -56,6 +65,7 @@ const DirectMessage = () => {
       e.preventDefault();
       if (chat?.trim() && chatData) {
         const savedChat = chat;
+
         mutateChat((prevChatData) => {
           prevChatData?.[0].unshift({
             id: (chatData[0][0]?.id || 0) + 1,
@@ -66,6 +76,7 @@ const DirectMessage = () => {
             Receiver: userData,
             createdAt: new Date(),
           });
+
           return prevChatData;
         }, false).then(() => {
           localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
@@ -75,6 +86,7 @@ const DirectMessage = () => {
             scrollbarRef.current.scrollToBottom();
           }
         });
+
         axios
           .post(`/api/workspaces/${workspace}/dms/${id}/chats`, {
             content: chat,

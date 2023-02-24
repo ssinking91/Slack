@@ -200,7 +200,6 @@ const Channel = () => {
             data-sk="tooltip_parent"
             type="button"
           >
-            1
             <i className="c-icon p-ia__view_header__button_icon c-icon--add-user" aria-hidden="true" />
           </button>
         </div>
