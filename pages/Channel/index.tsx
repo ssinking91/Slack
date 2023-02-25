@@ -24,10 +24,15 @@ const PAGE_SIZE = 20;
 
 const Channel = () => {
   const { workspace, channel } = useParams<{ workspace: string; channel: string }>();
+
   const [socket] = useSocket(workspace);
+
   const { data: userData } = useSWR<IUser>('/api/users', fetcher);
+
   const { data: channelsData } = useSWR<IChannel[]>(`/api/workspaces/${workspace}/channels`, fetcher);
+
   const channelData = channelsData?.find((v) => v.name === channel);
+
   const {
     data: chatData,
     mutate: mutateChat,
@@ -45,13 +50,17 @@ const Channel = () => {
       },
     },
   );
+
   const { data: channelMembersData } = useSWR<IUser[]>(
     userData ? `/api/workspaces/${workspace}/channels/${channel}/members` : null,
     fetcher,
   );
-  const [chat, onChangeChat, setChat] = useInput('');
-  const [showInviteChannelModal, setShowInviteChannelModal] = useState(false);
+
   const scrollbarRef = useRef<Scrollbars>(null);
+
+  const [chat, onChangeChat, setChat] = useInput('');
+
+  const [showInviteChannelModal, setShowInviteChannelModal] = useState(false);
   const [dragOver, setDragOver] = useState(false);
 
   const isEmpty = chatData?.[0]?.length === 0;
@@ -80,11 +89,13 @@ const Channel = () => {
         }, false).then(() => {
           localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
           setChat('');
+
           if (scrollbarRef.current) {
             console.log('scrollToBottom!', scrollbarRef.current?.getValues());
             scrollbarRef.current.scrollToBottom();
           }
         });
+
         axios
           .post(`/api/workspaces/${workspace}/channels/${channel}/chats`, {
             content: savedChat,
@@ -131,6 +142,7 @@ const Channel = () => {
 
   useEffect(() => {
     socket?.on('message', onMessage);
+
     return () => {
       socket?.off('message', onMessage);
     };

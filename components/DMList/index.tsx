@@ -1,6 +1,5 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { NavLink } from 'react-router-dom';
 //
 import EachDM from '@components/EachDM';
 import useSocket from '@hooks/useSocket';
@@ -20,7 +19,9 @@ const DMList = () => {
     userData ? `/api/workspaces/${workspace}/members` : null,
     fetcher,
   );
+
   const [socket] = useSocket(workspace);
+
   const [channelCollapse, setChannelCollapse] = useState(false);
   const [onlineList, setOnlineList] = useState<number[]>([]);
 
@@ -37,7 +38,9 @@ const DMList = () => {
     socket?.on('onlineList', (data: number[]) => {
       setOnlineList(data);
     });
+
     console.log('socket on dm', socket?.hasListeners('dm'), socket);
+
     return () => {
       console.log('socket off dm', socket?.hasListeners('dm'));
       socket?.off('onlineList');

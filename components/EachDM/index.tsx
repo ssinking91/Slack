@@ -1,8 +1,9 @@
-import { IUser } from '@typings/db';
-import fetcher from '@utils/fetcher';
 import React, { useEffect, VFC } from 'react';
 import { useParams } from 'react-router';
 import { NavLink, useLocation } from 'react-router-dom';
+//
+import { IUser } from '@typings/db';
+import fetcher from '@utils/fetcher';
 import useSWR from 'swr';
 
 interface Props {

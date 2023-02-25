@@ -12,6 +12,7 @@ interface Props {
   setSize: (f: (size: number) => number) => Promise<(IDM | IChat)[][] | undefined>;
 }
 const ChatList: FC<Props> = ({ scrollbarRef, isReachingEnd, isEmpty, chatSections, setSize }) => {
+  //
   const onScroll = useCallback(
     (values) => {
       if (values.scrollTop === 0 && !isReachingEnd && !isEmpty) {
@@ -22,7 +23,7 @@ const ChatList: FC<Props> = ({ scrollbarRef, isReachingEnd, isEmpty, chatSection
     },
     [setSize, scrollbarRef, isReachingEnd, isEmpty],
   );
-
+  //
   return (
     <ChatZone>
       <Scrollbars autoHide ref={scrollbarRef} onScrollFrame={onScroll}>
