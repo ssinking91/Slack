@@ -39,14 +39,16 @@ const DMList = () => {
       setOnlineList(data);
     });
 
-    console.log('socket on dm', socket?.hasListeners('dm'), socket);
+    console.info('DmList socket : ', socket);
+
+    // console.log('socket on dm', socket?.hasListeners('dm'), socket);
 
     return () => {
-      console.log('socket off dm', socket?.hasListeners('dm'));
+      // console.log('socket off dm', socket?.hasListeners('dm'));
       socket?.off('onlineList');
     };
   }, [socket]);
-
+  console.info('onlineList : ', onlineList);
   return (
     <>
       <h2>

@@ -5,6 +5,8 @@ const backUrl = process.env.NODE_ENV === 'production' ? 'https://sleact.nodebird
 
 const sockets: { [key: string]: Socket } = {};
 
+// Socket.IO는 전역적인 특징을 가짐
+// 공통된 컴포넌트나 훅에 만들어 사용
 const useSocket = (workspace?: string): [Socket | undefined, () => void] => {
   //
   const disconnect = useCallback(() => {
@@ -19,6 +21,7 @@ const useSocket = (workspace?: string): [Socket | undefined, () => void] => {
   }
   //
   if (!sockets[workspace]) {
+    // Polling하지 말고, websocket만 쓸 것
     sockets[workspace] = io(`${backUrl}/ws-${workspace}`, {
       transports: ['websocket'],
     });
@@ -30,3 +33,8 @@ const useSocket = (workspace?: string): [Socket | undefined, () => void] => {
 };
 
 export default useSocket;
+
+// socket = io.connect()
+// socket emit()
+// sockets.on()
+// sockets.disconnect()

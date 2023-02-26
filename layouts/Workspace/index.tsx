@@ -136,7 +136,7 @@ const Workspace = () => {
 
   useEffect(() => {
     if (channelData && userData) {
-      console.info('로그인하자', socket);
+      console.info('Workspace socket : ', socket);
       socket?.emit('login', { id: userData?.id, channels: channelData.map((v) => v.id) });
     }
   }, [socket, userData, channelData]);
@@ -145,8 +145,8 @@ const Workspace = () => {
     return <Redirect to="/login" />;
   }
 
-  console.log('userData : ', userData);
-  console.log('channelData : ', channelData);
+  // console.log('userData : ', userData);
+  // console.log('channelData : ', channelData);
 
   return (
     <div>
