@@ -11,9 +11,7 @@ import { IDM, IUser, IUserWithOnline } from '@typings/db';
 const DMList = () => {
   const { workspace } = useParams<{ workspace?: string }>();
   //
-  const { data: userData } = useSWR<IUser>('/api/users', fetcher, {
-    dedupingInterval: 2000, // 2초
-  });
+  const { data: userData } = useSWR<IUser>('/api/users', fetcher);
   //
   const { data: memberData } = useSWR<IUserWithOnline[]>(
     userData ? `/api/workspaces/${workspace}/members` : null,
@@ -30,25 +28,26 @@ const DMList = () => {
   }, []);
 
   useEffect(() => {
-    console.log('DMList: workspace 바꼈다', workspace);
+    console.log('DMList workspace', workspace);
     setOnlineList([]);
   }, [workspace]);
 
   useEffect(() => {
+    console.info('DmList socket : ', socket);
     socket?.on('onlineList', (data: number[]) => {
       setOnlineList(data);
     });
 
-    console.info('DmList socket : ', socket);
-
     // console.log('socket on dm', socket?.hasListeners('dm'), socket);
 
+    // 앱 종료 시 등록한 이벤트 해제
     return () => {
       // console.log('socket off dm', socket?.hasListeners('dm'));
       socket?.off('onlineList');
     };
   }, [socket]);
-  console.info('onlineList : ', onlineList);
+
+  console.log('onlineList : ', onlineList);
   return (
     <>
       <h2>
@@ -64,7 +63,6 @@ const DMList = () => {
       <div>
         {!channelCollapse &&
           memberData?.map((member) => {
-            console.log(onlineList);
             const isOnline = onlineList.includes(member.id);
             return <EachDM key={member.id} member={member} isOnline={isOnline} />;
           })}

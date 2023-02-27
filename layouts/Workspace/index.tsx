@@ -47,7 +47,9 @@ const Workspace = () => {
   //
   const [socket, disconnectSocket] = useSocket(workspace);
   //
-  const { data: userData, mutate: revalidateUser } = useSWR<IUser | false>('/api/users', fetcher);
+  const { data: userData, mutate: revalidateUser } = useSWR<IUser | false>('/api/users', fetcher, {
+    dedupingInterval: 2000, // 2초
+  });
   const { data: channelData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
   //
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
@@ -127,13 +129,7 @@ const Workspace = () => {
     setShowWorkspaceModal((prev) => !prev);
   }, []);
 
-  useEffect(() => {
-    return () => {
-      console.info('disconnect socket', workspace);
-      disconnectSocket();
-    };
-  }, [disconnectSocket, workspace]);
-
+  // socket
   useEffect(() => {
     if (channelData && userData) {
       console.info('Workspace socket : ', socket);
@@ -141,10 +137,17 @@ const Workspace = () => {
     }
   }, [socket, userData, channelData]);
 
+  useEffect(() => {
+    return () => {
+      console.info('disconnect Workspace', workspace);
+      disconnectSocket();
+    };
+  }, [disconnectSocket, workspace]);
+  //
+
   if (userData === false) {
     return <Redirect to="/login" />;
   }
-
   // console.log('userData : ', userData);
   // console.log('channelData : ', channelData);
 
