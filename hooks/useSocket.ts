@@ -7,6 +7,9 @@ const backUrl = process.env.NODE_ENV === 'production' ? 'https://sleact.nodebird
 // const sockets: { [key: string]: Socket } = {};
 const sockets: { [key: string]: SocketIOClient.Socket } = {};
 
+// io 객체 - 연결된 전체 클라이언트들과의 interacting을 위한 객체
+// socket 객체 - 개별 클라이언트와의 interacting을 위한 객체
+
 // Socket.IO는 전역적인 특징을 가짐
 // 공통된 컴포넌트나 훅에 만들어 사용
 const useSocket = (workspace?: string): [SocketIOClient.Socket | undefined, () => void] => {

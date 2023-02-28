@@ -13,6 +13,8 @@ interface Props {
   data?: IUser[];
 }
 const ChatBox: FC<Props> = ({ onSubmitForm, chat, onChangeChat, placeholder, data }) => {
+  console.log('ChatBox : ', data);
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -64,12 +66,12 @@ const ChatBox: FC<Props> = ({ onSubmitForm, chat, onChangeChat, placeholder, dat
           onKeyPress={onKeydownChat}
           placeholder={placeholder}
           inputRef={textareaRef}
-          allowSuggestionsAboveCursor
+          forceSuggestionsAboveCursor={true}
         >
           <Mention
-            appendSpaceOnAdd
             trigger="@"
             data={data?.map((v) => ({ id: v.id, display: v.nickname })) || []}
+            appendSpaceOnAdd
             renderSuggestion={renderUserSuggestion}
           />
         </MentionsTextarea>

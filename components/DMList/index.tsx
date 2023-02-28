@@ -28,13 +28,14 @@ const DMList = () => {
   }, []);
 
   useEffect(() => {
-    console.log('DMList workspace', workspace);
+    console.log('DMList workspace : ', workspace);
     setOnlineList([]);
   }, [workspace]);
 
   useEffect(() => {
     console.info('DmList socket : ', socket);
     socket?.on('onlineList', (data: number[]) => {
+      console.log('onlineList : ', data);
       setOnlineList(data);
     });
 
@@ -47,7 +48,6 @@ const DMList = () => {
     };
   }, [socket]);
 
-  console.log('onlineList : ', onlineList);
   return (
     <>
       <h2>

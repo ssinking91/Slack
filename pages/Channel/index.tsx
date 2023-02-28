@@ -33,6 +33,11 @@ const Channel = () => {
 
   const channelData = channelsData?.find((v) => v.name === channel);
 
+  const { data: channelMembersData } = useSWR<IUser[]>(
+    userData ? `/api/workspaces/${workspace}/channels/${channel}/members` : null,
+    fetcher,
+  );
+
   const {
     data: chatData,
     mutate: mutateChat,
@@ -49,11 +54,6 @@ const Channel = () => {
         }
       },
     },
-  );
-
-  const { data: channelMembersData } = useSWR<IUser[]>(
-    userData ? `/api/workspaces/${workspace}/channels/${channel}/members` : null,
-    fetcher,
   );
 
   const scrollbarRef = useRef<Scrollbars>(null);
