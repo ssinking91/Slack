@@ -32,33 +32,39 @@ const DirectMessage = () => {
 
   const { data: userData } = useSWR(`/api/workspaces/${workspace}/users/${id}`, fetcher);
 
+  // reverse infinite scroll
   const {
     data: chatData,
     mutate: mutateChat,
     setSize,
   } = useSWRInfinite<IDM[]>(
-    (index) => `/api/workspaces/${workspace}/dms/${id}/chats?perPage=${PAGE_SIZE}&page=${index + 1}`,
+    (pageIndex) => `/api/workspaces/${workspace}/dms/${id}/chats?perPage=${PAGE_SIZE}&page=${pageIndex + 1}`,
     fetcher,
     {
       onSuccess(data) {
+        // data : [Array(20), Array(1)]
         if (data?.length === 1) {
           setTimeout(() => {
+            // 스크롤바 제일 아래로
+
             scrollbarRef.current?.scrollToBottom();
           }, 100);
         }
       },
     },
   );
-
+  // data가 비어있는지 확인 => 마지막 페이지 확인
+  const isEmpty = chatData?.[0]?.length === 0;
+  // PAGE_SIZE 보다  적게 가지고 왔는지 확인 => 마지막 페이지 확인
+  const isReachingEnd = isEmpty || (chatData && chatData[chatData.length - 1]?.length < PAGE_SIZE);
+  //
+  const chatSections = makeSection(chatData ? ([] as IDM[]).concat(...chatData).reverse() : []);
+  //
   const [chat, onChangeChat, setChat] = useInput('');
 
   const scrollbarRef = useRef<Scrollbars>(null);
 
   const [dragOver, setDragOver] = useState(false);
-
-  const isEmpty = chatData?.[0]?.length === 0;
-
-  const isReachingEnd = isEmpty || (chatData && chatData[chatData.length - 1]?.length < PAGE_SIZE);
 
   const onSubmitForm = useCallback(
     (e) => {
@@ -66,7 +72,9 @@ const DirectMessage = () => {
       if (chat?.trim() && chatData) {
         const savedChat = chat;
 
+        // Optimistic UI
         mutateChat((prevChatData) => {
+          // prevChatData : [Array(20), Array(1)]
           prevChatData?.[0].unshift({
             id: (chatData[0][0]?.id || 0) + 1,
             content: savedChat,
@@ -99,17 +107,28 @@ const DirectMessage = () => {
 
   const onMessage = useCallback(
     (data: IDM) => {
+      // id는 상대방 아이디
+      console.log('onMessage data : ', data);
       if (data.SenderId === Number(id) && myData.id !== Number(id)) {
         mutateChat((chatData) => {
           chatData?.[0].unshift(data);
           return chatData;
         }, false).then(() => {
           if (scrollbarRef.current) {
+            // console.log(
+            //   scrollbarRef.current.getScrollHeight(),
+            //   scrollbarRef.current.getClientHeight(),
+            //   scrollbarRef.current.getScrollTop(),
+            // );
             if (
+              // 남이 채팅을 칠때마다 스크롤이 내려가는 것 방지
+              // => 내가 150px 이상으로 올렸을때는 남이 채팅을 처도 스크롤 방지
+              // => 내가 150px 미만으로 올렸을때는 남이 채팅을 처도 스크롤 됨
               scrollbarRef.current.getScrollHeight() <
               scrollbarRef.current.getClientHeight() + scrollbarRef.current.getScrollTop() + 150
             ) {
               console.log('scrollToBottom!', scrollbarRef.current?.getValues());
+
               setTimeout(() => {
                 scrollbarRef.current?.scrollToBottom();
               }, 100);
@@ -127,17 +146,6 @@ const DirectMessage = () => {
     },
     [id, myData, mutateChat],
   );
-
-  useEffect(() => {
-    socket?.on('dm', onMessage);
-    return () => {
-      socket?.off('dm', onMessage);
-    };
-  }, [socket, onMessage]);
-
-  useEffect(() => {
-    localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
-  }, [workspace, id]);
 
   const onDrop = useCallback(
     (e) => {
@@ -176,11 +184,22 @@ const DirectMessage = () => {
     setDragOver(true);
   }, []);
 
+  // soket
+  useEffect(() => {
+    socket?.on('dm', onMessage);
+    // 앱 종료 시 등록한 이벤트 해제
+    return () => {
+      socket?.off('dm', onMessage);
+    };
+  }, [socket, onMessage]);
+  //
+  useEffect(() => {
+    localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
+  }, [workspace, id]);
+  //
   if (!userData || !myData) {
     return null;
   }
-
-  const chatSections = makeSection(chatData ? ([] as IDM[]).concat(...chatData).reverse() : []);
 
   return (
     <Container onDrop={onDrop} onDragOver={onDragOver}>

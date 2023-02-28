@@ -16,7 +16,7 @@ interface Props {
 }
 //
 const Chat: FC<Props> = memo(({ data }) => {
-  console.log('Chat : ', data);
+  // console.log('Chat : ', data);
   const { workspace } = useParams<{ workspace: string; channel: string }>();
   const user: IUser = 'Sender' in data ? data.Sender : data.User;
 

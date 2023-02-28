@@ -11,12 +11,26 @@ interface Props {
   chatSections: { [key: string]: (IDM | IChat)[] };
   setSize: (f: (size: number) => number) => Promise<(IDM | IChat)[][] | undefined>;
 }
-const ChatList: FC<Props> = ({ scrollbarRef, isReachingEnd, isEmpty, chatSections, setSize }) => {
+const ChatList: FC<Props> = ({
+  scrollbarRef,
+  isReachingEnd,
+  isEmpty,
+  chatSections,
+  setSize,
   //
+}) => {
+  // console.log('chatSections : ', chatSections);
+  //
+  // reverse infinite scroll
   const onScroll = useCallback(
     (values) => {
+      // values.scrollTop === 0  => 가장 위
       if (values.scrollTop === 0 && !isReachingEnd && !isEmpty) {
-        setSize((size) => size + 1).then(() => {
+        // 데이터 추가 로딩
+        setSize((preSize) => preSize + 1).then(() => {
+          // 스크롤 위치 유지
+          // scrollbarRef.current?.getScrollHeight() : 총 scroll height
+          // values.scrollHeight : 현재 scroll된 height
           scrollbarRef.current?.scrollTop(scrollbarRef.current?.getScrollHeight() - values.scrollHeight);
         });
       }

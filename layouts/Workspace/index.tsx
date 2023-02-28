@@ -148,8 +148,6 @@ const Workspace = () => {
   if (userData === false) {
     return <Redirect to="/login" />;
   }
-  // console.log('userData : ', userData);
-  // console.log('channelData : ', channelData);
 
   return (
     <div>

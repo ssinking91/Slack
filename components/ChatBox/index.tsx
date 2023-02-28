@@ -13,7 +13,7 @@ interface Props {
   data?: IUser[];
 }
 const ChatBox: FC<Props> = ({ onSubmitForm, chat, onChangeChat, placeholder, data }) => {
-  console.log('ChatBox : ', data);
+  // console.log('ChatBox : ', data);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
