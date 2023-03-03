@@ -29,8 +29,8 @@ const ChatList: FC<Props> = ({
         // 데이터 추가 로딩
         setSize((preSize) => preSize + 1).then(() => {
           // 스크롤 위치 유지
-          // scrollbarRef.current?.getScrollHeight() : 총 scroll height
-          // values.scrollHeight : 현재 scroll된 height
+          // scrollbarRef.current?.getScrollHeight() : 총 scroll 할 수 있는 height
+          // values.scrollHeight : 현재 values의 scroll된 height
           scrollbarRef.current?.scrollTop(scrollbarRef.current?.getScrollHeight() - values.scrollHeight);
         });
       }

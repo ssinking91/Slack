@@ -37,7 +37,10 @@ const Channel = () => {
     userData ? `/api/workspaces/${workspace}/channels/${channel}/members` : null,
     fetcher,
   );
+
   // reverse infinite scroll
+  const scrollbarRef = useRef<Scrollbars>(null);
+
   const {
     data: chatData,
     mutate: mutateChat,
@@ -47,6 +50,7 @@ const Channel = () => {
     fetcher,
     {
       onSuccess(data) {
+        // data : [Array(20), Array(1)]
         if (data?.length === 1) {
           setTimeout(() => {
             // 스크롤바 제일 아래로
@@ -62,8 +66,6 @@ const Channel = () => {
   const isReachingEnd = isEmpty || (chatData && chatData[chatData.length - 1]?.length < PAGE_SIZE);
   //
   const chatSections = makeSection(chatData ? ([] as IChat[]).concat(...chatData).reverse() : []);
-
-  const scrollbarRef = useRef<Scrollbars>(null);
 
   const [chat, onChangeChat, setChat] = useInput('');
 
@@ -96,6 +98,7 @@ const Channel = () => {
           return prevChatData;
         }, false).then(() => {
           localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
+
           setChat('');
 
           if (scrollbarRef.current) {
@@ -116,24 +119,21 @@ const Channel = () => {
 
   const onMessage = useCallback(
     (data: IChat) => {
+      console.log('onMessage data : ', data);
       if (
         data.Channel.name === channel &&
         (data.content.startsWith('uploads\\') || data.content.startsWith('uploads/') || data.UserId !== userData?.id)
       ) {
         mutateChat((chatData) => {
           chatData?.[0].unshift(data);
+
           return chatData;
         }, false).then(() => {
           if (scrollbarRef.current) {
-            // console.log(
-            //   scrollbarRef.current.getScrollHeight(),
-            //   scrollbarRef.current.getClientHeight(),
-            //   scrollbarRef.current.getScrollTop(),
-            // );
+            // 남이 채팅을 칠때마다 스크롤이 내려가는 것 방지
+            // => 내가 150px 이상으로 올렸을때는 남이 채팅을 처도 스크롤 방지
+            // => 내가 150px 미만으로 올렸을때는 남이 채팅을 처도 스크롤 됨
             if (
-              // 남이 채팅을 칠때마다 스크롤이 내려가는 것 방지
-              // => 내가 150px 이상으로 올렸을때는 남이 채팅을 처도 스크롤 방지
-              // => 내가 150px 미만으로 올렸을때는 남이 채팅을 처도 스크롤 됨
               scrollbarRef.current.getScrollHeight() <
               scrollbarRef.current.getClientHeight() + scrollbarRef.current.getScrollTop() + 150
             ) {
@@ -219,7 +219,7 @@ const Channel = () => {
     <Container onDrop={onDrop} onDragOver={onDragOver}>
       <Header>
         <span>#{channel}</span>
-        <div style={{ display: 'flex', flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
+        <div className="header-right">
           <span>{channelMembersData?.length}</span>
           <button
             onClick={onClickInviteChannel}

@@ -33,6 +33,8 @@ const DirectMessage = () => {
   const { data: userData } = useSWR(`/api/workspaces/${workspace}/users/${id}`, fetcher);
 
   // reverse infinite scroll
+  const scrollbarRef = useRef<Scrollbars>(null);
+
   const {
     data: chatData,
     mutate: mutateChat,
@@ -46,7 +48,6 @@ const DirectMessage = () => {
         if (data?.length === 1) {
           setTimeout(() => {
             // 스크롤바 제일 아래로
-
             scrollbarRef.current?.scrollToBottom();
           }, 100);
         }
@@ -60,9 +61,8 @@ const DirectMessage = () => {
   //
   const chatSections = makeSection(chatData ? ([] as IDM[]).concat(...chatData).reverse() : []);
   //
-  const [chat, onChangeChat, setChat] = useInput('');
 
-  const scrollbarRef = useRef<Scrollbars>(null);
+  const [chat, onChangeChat, setChat] = useInput('');
 
   const [dragOver, setDragOver] = useState(false);
 
@@ -88,7 +88,9 @@ const DirectMessage = () => {
           return prevChatData;
         }, false).then(() => {
           localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
+
           setChat('');
+
           if (scrollbarRef.current) {
             console.log('scrollToBottom!', scrollbarRef.current?.getValues());
             scrollbarRef.current.scrollToBottom();
@@ -112,18 +114,14 @@ const DirectMessage = () => {
       if (data.SenderId === Number(id) && myData.id !== Number(id)) {
         mutateChat((chatData) => {
           chatData?.[0].unshift(data);
+
           return chatData;
         }, false).then(() => {
           if (scrollbarRef.current) {
-            // console.log(
-            //   scrollbarRef.current.getScrollHeight(),
-            //   scrollbarRef.current.getClientHeight(),
-            //   scrollbarRef.current.getScrollTop(),
-            // );
+            // 남이 채팅을 칠때마다 스크롤이 내려가는 것 방지
+            // => 내가 150px 이상으로 올렸을때는 남이 채팅을 처도 스크롤 방지
+            // => 내가 150px 미만으로 올렸을때는 남이 채팅을 처도 스크롤 됨
             if (
-              // 남이 채팅을 칠때마다 스크롤이 내려가는 것 방지
-              // => 내가 150px 이상으로 올렸을때는 남이 채팅을 처도 스크롤 방지
-              // => 내가 150px 미만으로 올렸을때는 남이 채팅을 처도 스크롤 됨
               scrollbarRef.current.getScrollHeight() <
               scrollbarRef.current.getClientHeight() + scrollbarRef.current.getScrollTop() + 150
             ) {
