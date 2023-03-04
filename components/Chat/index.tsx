@@ -18,7 +18,12 @@ interface Props {
 const Chat: FC<Props> = memo(({ data }) => {
   // console.log('Chat : ', data);
   const { workspace } = useParams<{ workspace: string; channel: string }>();
+  // 속성 in 객체명 => in 연산자는 명시된 속성이 명시된 객체에 존재하면 true를 반환
   const user: IUser = 'Sender' in data ? data.Sender : data.User;
+
+  // 타입 가드
+  // typeof x === 'number' | 'string'
+  // Array.isArray(x) => []
 
   // @[test](1)
   // . : 글자
@@ -32,6 +37,7 @@ const Chat: FC<Props> = memo(({ data }) => {
   // () : 그루핑 => arr[1], arr[2] , ... 에 추가
   const result = useMemo<(string | JSX.Element)[] | JSX.Element>(
     () =>
+      // 이미지일 경우
       data.content.startsWith('uploads\\') || data.content.startsWith('uploads/') ? (
         <img src={`${BACK_URL}/${data.content}`} style={{ maxHeight: 200 }} />
       ) : (

@@ -34,6 +34,7 @@ const DMList = () => {
 
   useEffect(() => {
     console.info('DmList socket : ', socket);
+
     socket?.on('onlineList', (data: number[]) => {
       console.log('onlineList : ', data);
       setOnlineList(data);

@@ -77,10 +77,12 @@ const Channel = () => {
     setShowInviteChannelModal(false);
   }, []);
 
+  // 내가 쓴 채팅
   const onSubmitForm = useCallback(
     (e) => {
       e.preventDefault();
       if (chat?.trim() && chatData && channelData && userData) {
+        //
         const savedChat = chat;
 
         // Optimistic UI
@@ -97,6 +99,7 @@ const Channel = () => {
           });
           return prevChatData;
         }, false).then(() => {
+          //
           localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
 
           setChat('');
@@ -117,6 +120,7 @@ const Channel = () => {
     [chat, workspace, channel, channelData, userData, chatData, mutateChat, setChat],
   );
 
+  // 남이 쓴 채팅
   const onMessage = useCallback(
     (data: IChat) => {
       console.log('onMessage data : ', data);
@@ -161,19 +165,25 @@ const Channel = () => {
     setShowInviteChannelModal(true);
   }, []);
 
+  // Drag & Drop image upload
   const onDrop = useCallback(
     (e) => {
       e.preventDefault();
       console.log(e);
+
       const formData = new FormData();
+
       if (e.dataTransfer.items) {
         // Use DataTransferItemList interface to access the file(s)
         for (let i = 0; i < e.dataTransfer.items.length; i++) {
           // If dropped items aren't files, reject them
           console.log(e.dataTransfer.items[i]);
+
           if (e.dataTransfer.items[i].kind === 'file') {
             const file = e.dataTransfer.items[i].getAsFile();
+
             console.log(e, '.... file[' + i + '].name = ' + file.name);
+
             formData.append('image', file);
           }
         }
@@ -181,9 +191,11 @@ const Channel = () => {
         // Use DataTransfer interface to access the file(s)
         for (let i = 0; i < e.dataTransfer.files.length; i++) {
           console.log(e, '... file[' + i + '].name = ' + e.dataTransfer.files[i].name);
+
           formData.append('image', e.dataTransfer.files[i]);
         }
       }
+
       axios.post(`/api/workspaces/${workspace}/channels/${channel}/images`, formData).then(() => {
         setDragOver(false);
         localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
@@ -194,7 +206,7 @@ const Channel = () => {
 
   const onDragOver = useCallback((e) => {
     e.preventDefault();
-    console.log(e);
+    console.log('onDragOver', e);
     setDragOver(true);
   }, []);
 
@@ -216,7 +228,7 @@ const Channel = () => {
   }
 
   return (
-    <Container onDrop={onDrop} onDragOver={onDragOver}>
+    <Container onDragOver={onDragOver} onDrop={onDrop}>
       <Header>
         <span>#{channel}</span>
         <div className="header-right">

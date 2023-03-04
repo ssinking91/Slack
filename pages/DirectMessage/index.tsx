@@ -66,10 +66,12 @@ const DirectMessage = () => {
 
   const [dragOver, setDragOver] = useState(false);
 
+  // 내가 쓴 채팅
   const onSubmitForm = useCallback(
     (e) => {
       e.preventDefault();
       if (chat?.trim() && chatData) {
+        //
         const savedChat = chat;
 
         // Optimistic UI
@@ -87,6 +89,7 @@ const DirectMessage = () => {
 
           return prevChatData;
         }, false).then(() => {
+          //
           localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
 
           setChat('');
@@ -107,6 +110,7 @@ const DirectMessage = () => {
     [chat, workspace, id, myData, userData, chatData, mutateChat, setChat],
   );
 
+  // 남이 쓴 채팅
   const onMessage = useCallback(
     (data: IDM) => {
       // id는 상대방 아이디
@@ -145,18 +149,23 @@ const DirectMessage = () => {
     [id, myData, mutateChat],
   );
 
+  // Drag & Drop image upload
   const onDrop = useCallback(
     (e) => {
       e.preventDefault();
       console.log(e);
+
       const formData = new FormData();
+
       if (e.dataTransfer.items) {
         // Use DataTransferItemList interface to access the file(s)
         for (let i = 0; i < e.dataTransfer.items.length; i++) {
           // If dropped items aren't files, reject them
           if (e.dataTransfer.items[i].kind === 'file') {
             const file = e.dataTransfer.items[i].getAsFile();
+
             console.log('... file[' + i + '].name = ' + file.name);
+
             formData.append('image', file);
           }
         }
@@ -164,6 +173,7 @@ const DirectMessage = () => {
         // Use DataTransfer interface to access the file(s)
         for (let i = 0; i < e.dataTransfer.files.length; i++) {
           console.log('... file[' + i + '].name = ' + e.dataTransfer.files[i].name);
+
           formData.append('image', e.dataTransfer.files[i]);
         }
       }
@@ -178,7 +188,7 @@ const DirectMessage = () => {
 
   const onDragOver = useCallback((e) => {
     e.preventDefault();
-    console.log(e);
+    console.log('onDragOver', e);
     setDragOver(true);
   }, []);
 
