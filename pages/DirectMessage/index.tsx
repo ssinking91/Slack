@@ -200,7 +200,8 @@ const DirectMessage = () => {
       socket?.off('dm', onMessage);
     };
   }, [socket, onMessage]);
-  //
+
+  // workspace-id 현재 시간 기록
   useEffect(() => {
     localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
   }, [workspace, id]);

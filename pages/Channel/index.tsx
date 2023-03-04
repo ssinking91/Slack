@@ -219,6 +219,7 @@ const Channel = () => {
     };
   }, [socket, onMessage]);
 
+  // workspace-channel 현재 시간 기록
   useEffect(() => {
     localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
   }, [workspace, channel]);

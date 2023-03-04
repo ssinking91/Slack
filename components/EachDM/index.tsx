@@ -19,6 +19,7 @@ const EachDM: VFC<Props> = ({ member, isOnline }) => {
     dedupingInterval: 2000, // 2초
   });
 
+  // workspace-channel 마지막 시간 기록 가져오기
   const date = localStorage.getItem(`${workspace}-${member.id}`) || 0;
 
   const { data: count, mutate } = useSWR<number>(
