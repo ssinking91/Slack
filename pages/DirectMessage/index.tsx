@@ -192,6 +192,20 @@ const DirectMessage = () => {
     setDragOver(true);
   }, []);
 
+  const onDragEnter = useCallback((e) => {
+    e.preventDefault();
+    console.log('onDragEnter', e);
+    e.target.style.border = '1px dashed blue';
+    // setDragOver(true);
+  }, []);
+
+  const onDragLeave = useCallback((e) => {
+    e.preventDefault();
+    console.log('onDragLeave', e);
+    e.target.style.border = 'none';
+    setDragOver(false);
+  }, []);
+
   // soket
   useEffect(() => {
     socket?.on('dm', onMessage);
@@ -211,7 +225,11 @@ const DirectMessage = () => {
   }
 
   return (
-    <Container onDrop={onDrop} onDragOver={onDragOver}>
+    <Container
+      onDrop={onDrop}
+      onDragOver={onDragOver}
+      //
+    >
       <Header>
         <img src={gravatar.url(userData.email, { s: '24px', d: 'retro' })} alt={userData.nickname} />
         <span>{userData.nickname}</span>
@@ -230,7 +248,15 @@ const DirectMessage = () => {
         placeholder={`Message ${userData.nickname}`}
         data={[]}
       />
-      {dragOver && <DragOver>업로드!</DragOver>}
+      {dragOver && (
+        <DragOver
+          onDragEnter={onDragEnter}
+          onDragLeave={onDragLeave}
+          //
+        >
+          업로드!
+        </DragOver>
+      )}
     </Container>
   );
 };

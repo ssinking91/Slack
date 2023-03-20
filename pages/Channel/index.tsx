@@ -210,6 +210,20 @@ const Channel = () => {
     setDragOver(true);
   }, []);
 
+  const onDragEnter = useCallback((e) => {
+    e.preventDefault();
+    console.log('onDragEnter', e);
+    e.target.style.border = '1px dashed blue';
+    // setDragOver(true);
+  }, []);
+
+  const onDragLeave = useCallback((e) => {
+    e.preventDefault();
+    console.log('onDragLeave', e);
+    e.target.style.border = 'none';
+    setDragOver(false);
+  }, []);
+
   // soket
   useEffect(() => {
     socket?.on('message', onMessage);
@@ -229,7 +243,11 @@ const Channel = () => {
   }
 
   return (
-    <Container onDragOver={onDragOver} onDrop={onDrop}>
+    <Container
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      //
+    >
       <Header>
         <span>#{channel}</span>
         <div className="header-right">
@@ -265,7 +283,15 @@ const Channel = () => {
         setShowInviteChannelModal={setShowInviteChannelModal}
       />
       <ToastContainer position="bottom-center" />
-      {dragOver && <DragOver>업로드!</DragOver>}
+      {dragOver && (
+        <DragOver
+          onDragEnter={onDragEnter}
+          onDragLeave={onDragLeave}
+          //
+        >
+          업로드!
+        </DragOver>
+      )}
     </Container>
   );
 };

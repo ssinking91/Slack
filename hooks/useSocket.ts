@@ -17,6 +17,7 @@ const useSocket = (workspace?: string): [SocketIOClient.Socket | undefined, () =
   const disconnect = useCallback(() => {
     if (workspace && sockets[workspace]) {
       sockets[workspace].disconnect();
+      // delete 연산자는 객체의 속성을 제거
       delete sockets[workspace];
     }
   }, [workspace]);
@@ -26,7 +27,7 @@ const useSocket = (workspace?: string): [SocketIOClient.Socket | undefined, () =
   }
   //
   if (!sockets[workspace]) {
-    // Polling하지 말고, websocket만 쓸 것
+    //http연결을 요청(Polling) 하지않고 바로 websocket만 하용하도록 명시
     sockets[workspace] = io(`${backUrl}/ws-${workspace}`, {
       transports: ['websocket'],
     });
